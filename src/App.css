@@ -42,12 +42,11 @@
 }
 
 .bar {
-    /* background: black; */
     position: absolute;
 }
 
 .bar.active {
-  border: 1px dotted black; 
+  background: black;
 }
 
 .bar.left,
@@ -82,4 +81,8 @@
   top: 50%;
   left: 50%;
   transform: translateY(-50%);
+}
+
+.dot_active {
+  background: red;
 }

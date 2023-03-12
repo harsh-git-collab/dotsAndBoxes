@@ -25,7 +25,7 @@ class Square extends React.Component {
         }
 
         if(bar_name == 'dot') {
-            if(connection_map.get('clicked') ) {
+            if(connection_map.get('highlight') ) {
                 class_name += ' dot_active';
             }
         }
@@ -65,7 +65,7 @@ class Board extends React.Component {
                 ['left', -1],
                 ['bottom', -1],
                 ['right', -1],
-                ['clicked', false]       
+                ['highlight', false]       
             ])
             dots[i] = temp_map;
         }
@@ -74,6 +74,11 @@ class Board extends React.Component {
         // dots[24].set('right', 25);
 
         this.state = {
+            dotClicked: -1,
+            leftOfClickedDot: -1,
+            topOfClickedDot: -1,
+            bottomOfClickedDot: -1,
+            rightOfClickedDot: -1,
             dots: dots,
         }
         
@@ -81,39 +86,113 @@ class Board extends React.Component {
     }
 
     handleClick = (i) => {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
+            // that means the dot is connected 4 directionally. So this click is invalid
+            return;
+        }
         console.log("clicked")
         console.log(i);
         // check if the click is valid
         // here 15 is the number of columns
         let row_idx = i%15;
-        let left_idx = (row_idx -1 < 0) ? undefined : i-1;
-        let top_idx = (i-15 < 0) ? undefined : i-15;
-        let bottom_idx = (i + 15 >= 75) ? undefined : i+15;
-        let right_idx = (row_idx + 1 >= 15) ? undefined : i+1;
+        let left_idx = (row_idx -1 < 0) ? -1 : i-1;
+        let top_idx = (i-15 < 0) ? -1 : i-15;
+        let bottom_idx = (i + 15 >= 75) ? -1 : i+15;
+        let right_idx = (row_idx + 1 >= 15) ? -1 : i+1;
         console.log(left_idx + " " + right_idx)
         console.log(top_idx + " " + bottom_idx)
+        console.log("clicked status is ", this.state.dotClicked);
 
         // check if the click is even valid
+        if(this.state.dotClicked == -1){
+            // this is the first click
+            console.log("here we are first clicked");
+            // highlight those dots which are not yet connected
+            let new_dots = this.state.dots.slice();
+
+            new_dots[i].set('highlight', true);
+            
+            if(left_idx != -1 && this.state.dots[i].get('left') == -1){
+                new_dots[left_idx].set('highlight', true);
+            }
+            if(top_idx != -1  && this.state.dots[i].get('top') == -1){
+                new_dots[top_idx].set('highlight', true);
+            }
+            if(bottom_idx != -1  && this.state.dots[i].get('bottom') == -1){
+                new_dots[bottom_idx].set('highlight', true);
+            }
+            if(right_idx != -1  && this.state.dots[i].get('right') == -1){
+                new_dots[right_idx].set('highlight', true);
+            }
+            this.setState({
+                dotClicked: i,
+                leftOfClickedDot: left_idx,
+                topOfClickedDot: top_idx,
+                bottomOfClickedDot: bottom_idx,
+                rightOfClickedDot: right_idx,
+                dots: new_dots,
+            });
+            
+        }else {
+            // this is the second click for making a line
+            // check if it is even valid
+            console.log("this is the second click for making a line");
+            
+            if(i == this.state.leftOfClickedDot || i == this.state.topOfClickedDot || i == this.state.bottomOfClickedDot || i == this.state.rightOfClickedDot || i == this.state.dotClicked){
+                // then the click is valid
+                // update the state
+                let new_dots = this.state.dots.slice();
+                // switch off the highlighting
+                new_dots[this.state.dotClicked].set('highlight', false);
+                if(this.state.leftOfClickedDot !== -1) {
+                    new_dots[this.state.leftOfClickedDot].set('highlight', false);
+                }
+                if(this.state.topOfClickedDot !== -1) {
+                    new_dots[this.state.topOfClickedDot].set('highlight', false);
+                }
+                if(this.state.rightOfClickedDot !== -1) {
+                    new_dots[this.state.rightOfClickedDot].set('highlight', false);
+                }
+                if(this.state.bottomOfClickedDot !== -1) {
+                    new_dots[this.state.bottomOfClickedDot].set('highlight', false);
+                }
+
+                if(this.state.leftOfClickedDot != -1 && i == this.state.leftOfClickedDot) {
+                    new_dots[i].set('right', this.state.dotClicked);
+                    new_dots[this.state.dotClicked].set('left', i);
+                }else if(this.state.topOfClickedDot != -1 && i == this.state.topOfClickedDot) {
+                    new_dots[i].set('bottom', this.state.dotClicked);
+                    new_dots[this.state.dotClicked].set('top', i);
+                }else if(this.state.rightOfClickedDot != -1 && i == this.state.rightOfClickedDot) {
+                    new_dots[i].set('left', this.state.dotClicked);
+                    new_dots[this.state.dotClicked].set('right', i);
+                }else if(this.state.bottomOfClickedDot != -1 && i == this.state.bottomOfClickedDot) {
+                    new_dots[i].set('top', this.state.dotClicked);
+                    new_dots[this.state.dotClicked].set('bottom', i);
+                }
+
+
+                this.setState({
+                    dotClicked: -1,
+                    leftOfClickedDot: -1,
+                    topOfClickedDot: -1,
+                    bottomOfClickedDot: -1,
+                    rightOfClickedDot: -1,
+                    dots: new_dots,
+                });
+            }else {
+                alert("The selected dot is invalid")
+            }
+            
+            // check if all corner are connected
+            
+        }
 
         // check if a previous dot was clicked
         
 
         // for experiment purpose only
-        let new_dots = this.state.dots.slice();
-        new_dots[i].set('clicked', true);
-        if(left_idx != undefined){
-            new_dots[left_idx].set('clicked', true);
-        }
-        if(top_idx != undefined){
-            new_dots[top_idx].set('clicked', true);
-        }
-        if(bottom_idx != undefined){
-            new_dots[bottom_idx].set('clicked', true);
-        }
-        if(right_idx != undefined){
-            new_dots[right_idx].set('clicked', true);
-        }
-        this.setState({dots: new_dots});
+        
         
     }
 
@@ -126,7 +205,6 @@ class Board extends React.Component {
     render() {
         return (
             <div className='board'>
-                <button onClick={this.handleClick}> Click me</button>
                 <div className='board-row'>
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}

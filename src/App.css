@@ -20,7 +20,7 @@
 .square {
   width: 40px;
   height: 40px;
-  /* border: 1px solid black; */
+  /* border: 1px solid red; */
   position: relative;
 }
 
@@ -34,6 +34,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   transition: all 0.07s ease-in;
+  z-index: 10;
 }
 
 .dot:hover {
@@ -43,10 +44,11 @@
 
 .bar {
     position: absolute;
+    z-index: 10;
 }
 
 .bar.active {
-  background: black;
+  background: rgb(53, 43, 43);
 }
 
 .bar.left,
@@ -85,4 +87,29 @@
 
 .dot_active {
   background: red;
+}
+
+.inner_square {
+  width: 20px;
+  height: 20px;
+  /* background: rgb(164, 164, 246); */
+  /* background: transparent; */
+  position: absolute;
+  z-index: 4;
+}
+
+.inner_square.two {
+  left: 50%;
+  top: 0;
+  /* background:rgb(53, 43, 43); */
+}
+
+.inner_square.three {
+  left: 0;
+  top: 50%;
+}
+
+.inner_square.four {
+  top: 50%;
+  left: 50%;
 }

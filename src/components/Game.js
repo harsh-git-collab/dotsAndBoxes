@@ -45,6 +45,10 @@ class Square extends React.Component {
                 <div className={'bar bottom' + this.decide_class('bottom')}></div>
                 <div className={'bar right' + this.decide_class('right')}></div>
                 <div className={'dot ' + this.decide_class('dot')} onClick={this.props.onClick}></div>
+                <div className='inner_square one'></div>
+                <div className='inner_square two'></div>
+                <div className='inner_square three'></div>
+                <div className='inner_square four'></div>
             </div>
         );
     }

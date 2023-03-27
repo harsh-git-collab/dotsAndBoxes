@@ -69,7 +69,12 @@ class Board extends React.Component {
                 ['left', -1],
                 ['bottom', -1],
                 ['right', -1],
-                ['highlight', false]       
+                ['highlight', false],
+                ['sqr_1', -1],
+                ['sqr-2', -1],
+                ['sqr_3', -1],
+                ['sqr_4', -1],
+                ['background', 'transparent'],     
             ])
             dots[i] = temp_map;
         }
@@ -87,6 +92,35 @@ class Board extends React.Component {
         }
         
 
+    }
+
+    checkLoop(i, j, str){
+        let dot1 = Math.min(i, j);
+        let dot2 = dot1 == i ? j : i;
+    
+        if(str == 'h') {
+            // check for anticlock wise loop
+            let dot3 = dot2 - 15; // 15 is the number of cols
+            if(dot3 >= 0) {
+                let dot4 = dot3 - 1;
+                if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('top') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('bottom') == dot1 ) {
+                    return ;
+                }
+            }
+            // check for clockwise loop
+            dot3 = dot2 + 15;
+            
+            if(dot3 >= 75) { // here 75 is the total number of dots in the game
+                return false;
+            }
+             let dot4 = dot3 - 1;
+            
+            if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
+                return true;
+            }
+            
+        }
+        
     }
 
     handleClick = (i) => {
@@ -174,7 +208,17 @@ class Board extends React.Component {
                     new_dots[i].set('top', this.state.dotClicked);
                     new_dots[this.state.dotClicked].set('bottom', i);
                 }
+                
+                if(this.state.dotClicked + 1 == i || this.state.dotClicked -1 == i) {
+                    console.log("horizontal clicking");
+                    // check if a loop is being made
 
+                    // check anti-clockwise loop
+                    if(this.checkLoop(this.state.dotClicked, i, 'h')) {
+                        // if it returns true then mark the squres of those dots
+
+                    }
+                }
 
                 this.setState({
                     dotClicked: -1,

@@ -98,6 +98,12 @@
   z-index: 4;
 }
 
+.inner_square.one {
+  left: 0;
+  top: 0;
+  /* background:rgb(53, 43, 43); */
+}
+
 .inner_square.two {
   left: 50%;
   top: 0;
@@ -112,4 +118,8 @@
 .inner_square.four {
   top: 50%;
   left: 50%;
+}
+
+.inner_square.playerOne {
+  background: rgb(122, 122, 242);
 }

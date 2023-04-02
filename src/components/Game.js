@@ -1,11 +1,11 @@
 import React from 'react';
+import InnerSquare from './InnerSquare';
 
 class Square extends React.Component {
     // decide_class fuction returns the class of the bars and dots using props
     decide_class(bar_name) {
         var i = this.props.index;
         var connection_map = this.props.connections[i];
-        var connections_arr = this.props.connections;
         var class_name = '';
 
         if(bar_name == 'top' && connection_map.get('top') !== -1) {
@@ -45,10 +45,10 @@ class Square extends React.Component {
                 <div className={'bar bottom' + this.decide_class('bottom')}></div>
                 <div className={'bar right' + this.decide_class('right')}></div>
                 <div className={'dot ' + this.decide_class('dot')} onClick={this.props.onClick}></div>
-                <div className='inner_square one'></div>
-                <div className='inner_square two'></div>
-                <div className='inner_square three'></div>
-                <div className='inner_square four'></div>
+                <InnerSquare index={this.props.index} position="1" property_map={this.props.connections[this.props.index]} />
+                <InnerSquare index={this.props.index} position="2" property_map={this.props.connections[this.props.index]}/>
+                <InnerSquare index={this.props.index} position="3" property_map={this.props.connections[this.props.index]}/>
+                <InnerSquare index={this.props.index} position="4" property_map={this.props.connections[this.props.index]}/>
             </div>
         );
     }
@@ -59,22 +59,27 @@ class Board extends React.Component {
         super(props);
         // binding the function to make sure it has access to component attributes like this.props and this.state
         this.handleClick = this.handleClick.bind(this);
+        this.checkLoop = this.checkLoop.bind(this);
+        this.renderSquare = this.renderSquare.bind(this);
         //temp_map is the connections namely left, bottom, right, top it has with other nodes
         let ARR_SIZE = 75;
         let dots = new Array(ARR_SIZE)
         
         for(let i=0; i<ARR_SIZE; i++) {
             const temp_map = new Map([
-                ['top', -1],
+                ['top', -1], // top signifies if the dot in the center of the 
+                // square is coonected to dot above it
                 ['left', -1],
                 ['bottom', -1],
                 ['right', -1],
-                ['highlight', false],
-                ['sqr_1', -1],
-                ['sqr-2', -1],
+                ['highlight', false], // highlight property is used to highlight the dot 
+                // in the center of the square when clicked by a user
+                ['sqr_1', -1], // repreents the state of inner_squares component 1 2 3 4 in clockwise direction,
+                // starting from top left inner_square
+                ['sqr_2', -1],
                 ['sqr_3', -1],
                 ['sqr_4', -1],
-                ['background', 'transparent'],     
+                ['background', 'transparent'],  // this is for the background of inner_square   
             ])
             dots[i] = temp_map;
         }
@@ -83,12 +88,12 @@ class Board extends React.Component {
         // dots[24].set('right', 25);
 
         this.state = {
-            dotClicked: -1,
-            leftOfClickedDot: -1,
-            topOfClickedDot: -1,
-            bottomOfClickedDot: -1,
-            rightOfClickedDot: -1,
-            dots: dots,
+            dotClicked: -1, // tells up about the dot that is clicked either for the first time or the second time by a player
+            leftOfClickedDot: -1, // tells up about the left of the dot that is clicked either for the first time or the second time by a player
+            topOfClickedDot: -1, // tells up about the top of the dot that is clicked either for the first time or the second time by a player
+            bottomOfClickedDot: -1, // tells up about the bottom of the dot that is clicked either for the first time or the second time by a player
+            rightOfClickedDot: -1, // tells up about the right of the dot that is clicked either for the first time or the second time by a player
+            dots: dots, // dots is the array of maps. The properties of map tell us about the state of the individual square
         }
         
 
@@ -99,25 +104,48 @@ class Board extends React.Component {
         let dot2 = dot1 == i ? j : i;
     
         if(str == 'h') {
+            console.log( "inside check loop function\n");
             // check for anticlock wise loop
             let dot3 = dot2 - 15; // 15 is the number of cols
             if(dot3 >= 0) {
                 let dot4 = dot3 - 1;
                 if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('top') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('bottom') == dot1 ) {
-                    return ;
+                    // the above condition satifies then
+                    // an anti clockwise loop is being made
+                    // in which case we could return an object 
+
+                    return {
+                        'status': true,
+                        'dot1': dot1,
+                        'dot2': dot2,
+                        'dot3': dot3,
+                        'dot4': dot4,
+                        'direction': 'anti-clockwise'
+                    };
                 }
             }
             // check for clockwise loop
             dot3 = dot2 + 15;
             
             if(dot3 >= 75) { // here 75 is the total number of dots in the game
-                return false;
+                return {
+                    'status': false,
+                };
             }
              let dot4 = dot3 - 1;
             
             if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
-                return true;
+                return {
+                    'status': true,
+                    'dot1': dot1,
+                    'dot2': dot2,
+                    'dot3': dot3,
+                    'dot4': dot4,
+                    'direction': 'clockwise'
+                };
             }
+
+            return {'status': false};
             
         }
         
@@ -214,9 +242,24 @@ class Board extends React.Component {
                     // check if a loop is being made
 
                     // check anti-clockwise loop
-                    if(this.checkLoop(this.state.dotClicked, i, 'h')) {
+                    let dot_obj = this.checkLoop(this.state.dotClicked, i, 'h')
+                    if(dot_obj.status === true) {
                         // if it returns true then mark the squres of those dots
-
+                        console.log("box made hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+                        console.log(dot_obj)
+                        // now change the status in the new dots
+                        
+                        if(dot_obj.direction === "clockwise") {
+                            new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
+                            new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
+                            new_dots[dot_obj.dot4].set('sqr_2', 'pla_one');
+                            new_dots[dot_obj.dot3].set('sqr_1', 'pla_one');
+                        }else {
+                            new_dots[dot_obj.dot1].set('sqr_2', 'pla_one');
+                            new_dots[dot_obj.dot2].set('sqr_1', 'pla_one');
+                            new_dots[dot_obj.dot3].set('sqr_3', 'pla_one');
+                            new_dots[dot_obj.dot4].set('sqr_4', 'pla_one');
+                        }
                     }
                 }
 

@@ -99,7 +99,7 @@ class Board extends React.Component {
 
     }
 
-    checkLoop(i, j, str){
+    checkLoop(i, j, str, flag){
         let dot1 = Math.min(i, j);
         let dot2 = dot1 == i ? j : i;
     
@@ -107,43 +107,47 @@ class Board extends React.Component {
             console.log( "inside check loop function\n");
             // check for anticlock wise loop
             let dot3 = dot2 - 15; // 15 is the number of cols
-            if(dot3 >= 0) {
-                let dot4 = dot3 - 1;
-                if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('top') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('bottom') == dot1 ) {
-                    // the above condition satifies then
-                    // an anti clockwise loop is being made
-                    // in which case we could return an object
-                    let arr = [dot1, dot2, dot3, dot4];
-                    arr.sort(function(a, b){return a - b});
-                    console.log("returning for anticlockwise loop");
-                    console.log(arr);
-                    return {
-                        'status': true,
-                        'dot1': arr[0],
-                        'dot2': arr[1],
-                        'dot3': arr[2],
-                        'dot4': arr[3],
+            if(flag == 1) { // if flag is 1 then check anti-clockwise
+                if(dot3 >= 0) {
+                    let dot4 = dot3 - 1;
+                    if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('top') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('bottom') == dot1 ) {
+                        // the above condition satifies then
+                        // an anti clockwise loop is being made
+                        // in which case we could return an object
+                        let arr = [dot1, dot2, dot3, dot4];
+                        arr.sort(function(a, b){return a - b});
+                        console.log("returning for anticlockwise loop");
+                        console.log(arr);
+                        return {
+                            'status': true,
+                            'dot1': arr[0],
+                            'dot2': arr[1],
+                            'dot3': arr[2],
+                            'dot4': arr[3],
+                        }
+                    }
+                }
+            }else {
+                // check for clockwise loop
+                dot3 = dot2 + 15;
+                
+                if(dot3 < 75) { // here 75 is the total number of dots in the game
+                    let dot4 = dot3 - 1;
+                
+                    if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
+                        let arr = [dot1, dot2, dot3, dot4];
+                        arr.sort();
+                        return {
+                            'status': true,
+                            'dot1': arr[0],
+                            'dot2': arr[1],
+                            'dot3': arr[2],
+                            'dot4': arr[3],
+                        }
                     }
                 }
             }
-            // check for clockwise loop
-            dot3 = dot2 + 15;
             
-            if(dot3 < 75) { // here 75 is the total number of dots in the game
-                let dot4 = dot3 - 1;
-            
-                if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
-                    let arr = [dot1, dot2, dot3, dot4];
-                    arr.sort();
-                    return {
-                        'status': true,
-                        'dot1': arr[0],
-                        'dot2': arr[1],
-                        'dot3': arr[2],
-                        'dot4': arr[3],
-                    }
-                }
-            }
              
 
             return {'status': false};
@@ -153,38 +157,42 @@ class Board extends React.Component {
             // check for clockwise loop
             let dot3 = dot2 - 1;
             
-            if(dot3 >= 0) {
-                let dot4 = dot3 - 15;
-                if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('left') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('right') == dot1) {
-                    let arr = [dot1, dot2, dot3, dot4];
-                    arr.sort();
-                    return {
-                        'status': true,
-                        'dot1': arr[0],
-                        'dot2': arr[1],
-                        'dot3': arr[2],
-                        'dot4': arr[3],
+            if(flag == 0){
+                if(dot3 >= 0) {
+                    let dot4 = dot3 - 15;
+                    if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('left') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('right') == dot1) {
+                        let arr = [dot1, dot2, dot3, dot4];
+                        arr.sort();
+                        return {
+                            'status': true,
+                            'dot1': arr[0],
+                            'dot2': arr[1],
+                            'dot3': arr[2],
+                            'dot4': arr[3],
+                        }
+                    }
+                }
+            }else {
+                // check for anti-clockwise direction
+                dot3 = dot2 + 1;
+                let row_idx = dot3%15; // 15 number of dots in one row (no. of col in the game)
+                if(row_idx < 15) {
+                    let dot4 = dot3-15;
+                    if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('right') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('left') == dot1) {
+                        let arr = [dot1, dot2, dot3, dot4];
+                        arr.sort();
+                        return {
+                            'status': true,
+                            'dot1': arr[0],
+                            'dot2': arr[1],
+                            'dot3': arr[2],
+                            'dot4': arr[3],
+                        }
                     }
                 }
             }
 
-            // check for anti-clockwise direction
-            dot3 = dot2 + 1;
-            let row_idx = dot3%15; // 15 number of dots in one row (no. of col in the game)
-            if(row_idx < 15) {
-                let dot4 = dot3-15;
-                if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('right') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('left') == dot1) {
-                    let arr = [dot1, dot2, dot3, dot4];
-                    arr.sort();
-                    return {
-                        'status': true,
-                        'dot1': arr[0],
-                        'dot2': arr[1],
-                        'dot3': arr[2],
-                        'dot4': arr[3],
-                    }
-                }
-            }
+            
 
             return {'status': false};
             
@@ -283,35 +291,40 @@ class Board extends React.Component {
                     console.log("horizontal clicking");
                     // check if a loop is being made
 
-                    // check anti-clockwise loop
-                    let dot_obj = this.checkLoop(this.state.dotClicked, i, 'h')
-                    if(dot_obj.status === true) {
-                        // if it returns true then mark the squres of those dots
-                        console.log("box made hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-                        console.log(dot_obj)
-                        // now change the status in the new dots
-                        new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
-                        new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
-                        new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
-                        new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
-                        
+                    let flag = 2;
+                    while(flag--) {
+                        let dot_obj = this.checkLoop(this.state.dotClicked, i, 'h', flag)
+                        if(dot_obj.status === true) {
+                            // if it returns true then mark the squres of those dots
+                            console.log("box made hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+                            console.log(dot_obj)
+                            // now change the status in the new dots
+                            new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
+                            new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
+                            new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
+                            new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
+                            
+                        }
                     }
                 }
 
                 // check for loop when we conect between top and bottom dots
                 if(this.state.dotClicked + 15 == i || this.state.dotClicked - 15 == i) {
-                    let dot_obj = this.checkLoop(this.state.dotClicked, i, 'v');
+                    let flag = 2;
+                    while(flag--) {
+                        let dot_obj = this.checkLoop(this.state.dotClicked, i, 'v', flag);
 
-                    if(dot_obj.status === true) {
-                        // if it returns true then mark the squres of those dots
-                        console.log("box made vvvvvvvvvvvvvvvvvvv");
-                        console.log(dot_obj)
-                        // now change the status in the new dots
-                        new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
-                        new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
-                        new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
-                        new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
-                        
+                        if(dot_obj.status === true) {
+                            // if it returns true then mark the squres of those dots
+                            console.log("box made vvvvvvvvvvvvvvvvvvv");
+                            console.log(dot_obj)
+                            // now change the status in the new dots
+                            new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
+                            new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
+                            new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
+                            new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
+                            
+                        }
                     }
                 }
 

@@ -79,7 +79,7 @@ class Board extends React.Component {
                 ['sqr_2', -1],
                 ['sqr_3', -1],
                 ['sqr_4', -1],
-                ['background', 'transparent'],  // this is for the background of inner_square   
+                ['playerOneNext', true],  // this is for the background of inner_square   
             ])
             dots[i] = temp_map;
         }

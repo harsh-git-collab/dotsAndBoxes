@@ -123,3 +123,7 @@
 .inner_square.playerOne {
   background: rgb(122, 122, 242);
 }
+
+.inner_square.playerTwo {
+  background: red;
+}

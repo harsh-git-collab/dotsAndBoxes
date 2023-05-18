@@ -45,10 +45,10 @@ class Square extends React.Component {
                 <div className={'bar bottom' + this.decide_class('bottom')}></div>
                 <div className={'bar right' + this.decide_class('right')}></div>
                 <div className={'dot ' + this.decide_class('dot')} onClick={this.props.onClick}></div>
-                <InnerSquare index={this.props.index} position="1" property_map={this.props.connections[this.props.index]} />
-                <InnerSquare index={this.props.index} position="2" property_map={this.props.connections[this.props.index]}/>
-                <InnerSquare index={this.props.index} position="3" property_map={this.props.connections[this.props.index]}/>
-                <InnerSquare index={this.props.index} position="4" property_map={this.props.connections[this.props.index]}/>
+                <InnerSquare index={this.props.index} position="1" property_map={this.props.connections[this.props.index]}  player={this.props.player}/>
+                <InnerSquare index={this.props.index} position="2" property_map={this.props.connections[this.props.index]} player={this.props.player}/>
+                <InnerSquare index={this.props.index} position="3" property_map={this.props.connections[this.props.index]} player={this.props.player}/>
+                <InnerSquare index={this.props.index} position="4" property_map={this.props.connections[this.props.index]} player={this.props.player}/>
             </div>
         );
     }
@@ -78,8 +78,7 @@ class Board extends React.Component {
                 // starting from top left inner_square
                 ['sqr_2', -1],
                 ['sqr_3', -1],
-                ['sqr_4', -1],
-                ['playerOneNext', true],  // this is for the background of inner_square   
+                ['sqr_4', -1],   
             ])
             dots[i] = temp_map;
         }
@@ -93,7 +92,8 @@ class Board extends React.Component {
             topOfClickedDot: -1, // tells up about the top of the dot that is clicked either for the first time or the second time by a player
             bottomOfClickedDot: -1, // tells up about the bottom of the dot that is clicked either for the first time or the second time by a player
             rightOfClickedDot: -1, // tells up about the right of the dot that is clicked either for the first time or the second time by a player
-            dots: dots, // dots is the array of maps. The properties of map tell us about the state of the individual square
+            dots: dots,  // dots is the array of maps. The properties of map tell us about the state of the individual square
+            playerOneNext: true,
         }
         
 
@@ -298,11 +298,12 @@ class Board extends React.Component {
                             // if it returns true then mark the squres of those dots
                             console.log("box made hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                             console.log(dot_obj)
+                            let player = this.state.playerOneNext ? 1 : 2;
                             // now change the status in the new dots
-                            new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
-                            new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
-                            new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
-                            new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
+                            new_dots[dot_obj.dot1].set('sqr_4', player);
+                            new_dots[dot_obj.dot2].set('sqr_3', player);
+                            new_dots[dot_obj.dot3].set('sqr_2', player);
+                            new_dots[dot_obj.dot4].set('sqr_1', player);
                             
                         }
                     }
@@ -318,11 +319,12 @@ class Board extends React.Component {
                             // if it returns true then mark the squres of those dots
                             console.log("box made vvvvvvvvvvvvvvvvvvv");
                             console.log(dot_obj)
+                            let player = this.state.playerOneNext ? 1 : 2;
                             // now change the status in the new dots
-                            new_dots[dot_obj.dot1].set('sqr_4', 'pla_one');
-                            new_dots[dot_obj.dot2].set('sqr_3', 'pla_one');
-                            new_dots[dot_obj.dot3].set('sqr_2', 'pla_one');
-                            new_dots[dot_obj.dot4].set('sqr_1', 'pla_one');
+                            new_dots[dot_obj.dot1].set('sqr_4', player);
+                            new_dots[dot_obj.dot2].set('sqr_3', player);
+                            new_dots[dot_obj.dot3].set('sqr_2', player);
+                            new_dots[dot_obj.dot4].set('sqr_1', player);
                             
                         }
                     }
@@ -334,6 +336,7 @@ class Board extends React.Component {
                     topOfClickedDot: -1,
                     bottomOfClickedDot: -1,
                     rightOfClickedDot: -1,
+                    playerOneNext: this.state.playerOneNext ? false : true,
                     dots: new_dots,
                 });
             }else {
@@ -354,7 +357,7 @@ class Board extends React.Component {
 
     renderSquare(i) {
         return (
-            <Square index={i} connections={this.state.dots} onClick={() => this.handleClick(i)}/>
+            <Square index={i} connections={this.state.dots} onClick={() => this.handleClick(i)} player={this.state.playerOneNext}/>
         );
     }
 

@@ -15,30 +15,38 @@ class InnerSquare extends React.Component {
 
         if(this.props.position ===  "1") {
             class_name += " one";
-            if(property_map.get('sqr_1') !== -1) {
+            if(property_map.get('sqr_1') === 1) {
                 // -1 means no one conquered
                 class_name += " playerOne";
+            }else if(property_map.get('sqr_1') == 2 ) {
+                class_name += " playerTwo";
             }
         }else if(this.props.position === "2") {
             class_name += " two";
-            if(property_map.get('sqr_2') !== -1) {
+            if(property_map.get('sqr_2') === 1) {
                 // -1 means no one conquered
                 class_name += " playerOne";
+            }else if(property_map.get('sqr_2') == 2 ) {
+                class_name += " playerTwo";
             }
         }else if(this.props.position === "3"){
             class_name += " three";
-            if(property_map.get('sqr_3') !== -1) {
+            if(property_map.get('sqr_3') === 1) {
                 // -1 means no one conquered
                 class_name += " playerOne";
+            }else if(property_map.get('sqr_3') == 2 ) {
+                class_name += " playerTwo";
             }
         }else if(this.props.position === "4") {
             class_name += " four";
-            if(property_map.get('sqr_4') !== -1) {
+            if(property_map.get('sqr_4') === 1) {
                 // -1 means no one conquered
                 class_name += " playerOne";
+            }else if(property_map.get('sqr_4') == 2 ) {
+                class_name += " playerTwo";
             }
         }
-
+        console.log("the player currently is:  ", this.props.player);
         return class_name;
     }
 

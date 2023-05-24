@@ -136,7 +136,7 @@ class Board extends React.Component {
                 
                     if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
                         let arr = [dot1, dot2, dot3, dot4];
-                        arr.sort();
+                        arr.sort(function(a, b){return a - b});
                         return {
                             'status': true,
                             'dot1': arr[0],
@@ -162,7 +162,7 @@ class Board extends React.Component {
                     let dot4 = dot3 - 15;
                     if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('left') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('right') == dot1) {
                         let arr = [dot1, dot2, dot3, dot4];
-                        arr.sort();
+                        arr.sort(function(a, b){return a - b});
                         return {
                             'status': true,
                             'dot1': arr[0],
@@ -180,7 +180,7 @@ class Board extends React.Component {
                     let dot4 = dot3-15;
                     if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('right') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('left') == dot1) {
                         let arr = [dot1, dot2, dot3, dot4];
-                        arr.sort();
+                        arr.sort(function(a, b){return a - b});
                         return {
                             'status': true,
                             'dot1': arr[0],

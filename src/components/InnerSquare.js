@@ -46,7 +46,7 @@ class InnerSquare extends React.Component {
                 class_name += " playerTwo";
             }
         }
-        console.log("the player currently is:  ", this.props.player);
+        // console.log("the player currently is:  ", this.props.player);
         return class_name;
     }
 

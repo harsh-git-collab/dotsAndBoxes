@@ -218,6 +218,70 @@ class Board extends React.Component {
         console.log(top_idx + " " + bottom_idx)
         console.log("clicked status is ", this.state.dotClicked);
 
+        // this is an additional check if we have clicked on a peripheral node
+        // that is already connected
+
+        // for top left node
+        if(i - 15 < 0 && row_idx - 1 < 0) {
+            // check if the top left node is connected
+            if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
+                return;
+            }
+        }
+        // for top right most node
+        if(i - 15 < 0 && row_idx +1 >= 15) {
+            // check if the top left node is connected
+            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('bottom') != -1) {
+                return;
+            }
+        }
+        // for bottom left node
+        if(i + 15 >= 75 && row_idx - 1 < 0) {
+            // check if the top left node is connected
+            if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1) {
+                return;
+            }
+        }
+        // for bottom right node
+        if(i + 15 >= 75 && row_idx + 1 >= 15) {
+            // check if the top left node is connected
+            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1) {
+                return;
+            }
+        }
+
+        // if  non-corner top dots
+        if(i - 15 < 0) {
+            // check if the top non corner dots are connected or not
+            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+                return;
+            }
+        }
+
+        // if non-corner botom dots
+        if(i + 15 >= 75) {
+            // check if the bottom non corner dots are connected or not
+            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1 ) {
+                return;
+            }
+        }
+
+        // check if left most column non corner dots are connected or not
+        if(row_idx - 1 < 0) {
+            
+            if(this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+                return;
+            }
+        }
+
+        // if dot non-corner top dots
+        if(row_idx + 1 >= 15) {
+            
+            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+                return;
+            }
+        }
+
         // check if the click is even valid
         if(this.state.dotClicked == -1){
             // this is the first click

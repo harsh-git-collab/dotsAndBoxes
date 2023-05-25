@@ -253,7 +253,7 @@ class Board extends React.Component {
             // check if it is even valid
             console.log("this is the second click for making a line");
             
-            if(i == this.state.leftOfClickedDot || i == this.state.topOfClickedDot || i == this.state.bottomOfClickedDot || i == this.state.rightOfClickedDot || i == this.state.dotClicked){
+            if(i === this.state.leftOfClickedDot || i === this.state.topOfClickedDot || i === this.state.bottomOfClickedDot || i === this.state.rightOfClickedDot || i === this.state.dotClicked){
                 // then the click is valid
                 // update the state
                 let new_dots = this.state.dots.slice();
@@ -272,6 +272,25 @@ class Board extends React.Component {
                     new_dots[this.state.bottomOfClickedDot].set('highlight', false);
                 }
 
+                // if the same dot was clicked twice that means the players
+                // cannot take turns
+
+                if(i === this.state.dotClicked) {
+                    // that means that the same dot was clicked twice 
+                    // so we do all the necessary state changes here and return from the function
+                    this.setState({
+                        dotClicked: -1,
+                        leftOfClickedDot: -1,
+                        topOfClickedDot: -1,
+                        bottomOfClickedDot: -1,
+                        rightOfClickedDot: -1,
+                        playerOneNext: this.state.playerOneNext,
+                        dots: new_dots,
+                    });
+
+                    return;
+                }
+
                 if(this.state.leftOfClickedDot != -1 && i == this.state.leftOfClickedDot) {
                     new_dots[i].set('right', this.state.dotClicked);
                     new_dots[this.state.dotClicked].set('left', i);
@@ -287,6 +306,8 @@ class Board extends React.Component {
                 }
                 
                 // check for loops when dots connected are horizontal
+                let box_was_cnqrd = false;
+
                 if(this.state.dotClicked + 1 == i || this.state.dotClicked -1 == i) {
                     console.log("horizontal clicking");
                     // check if a loop is being made
@@ -297,7 +318,8 @@ class Board extends React.Component {
                         if(dot_obj.status === true) {
                             // if it returns true then mark the squres of those dots
                             console.log("box made hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-                            console.log(dot_obj)
+                            console.log(dot_obj);
+                            box_was_cnqrd = true;
                             let player = this.state.playerOneNext ? 1 : 2;
                             // now change the status in the new dots
                             new_dots[dot_obj.dot1].set('sqr_4', player);
@@ -319,6 +341,7 @@ class Board extends React.Component {
                             // if it returns true then mark the squres of those dots
                             console.log("box made vvvvvvvvvvvvvvvvvvv");
                             console.log(dot_obj)
+                            box_was_cnqrd = true;
                             let player = this.state.playerOneNext ? 1 : 2;
                             // now change the status in the new dots
                             new_dots[dot_obj.dot1].set('sqr_4', player);
@@ -329,14 +352,14 @@ class Board extends React.Component {
                         }
                     }
                 }
-
+                console.log("the box was conqured value is ", box_was_cnqrd);
                 this.setState({
                     dotClicked: -1,
                     leftOfClickedDot: -1,
                     topOfClickedDot: -1,
                     bottomOfClickedDot: -1,
                     rightOfClickedDot: -1,
-                    playerOneNext: this.state.playerOneNext ? false : true,
+                    playerOneNext: ( box_was_cnqrd )   ? ( this.state.playerOneNext )  : (this.state.playerOneNext ? false : true),
                     dots: new_dots,
                 });
             }else {
@@ -364,6 +387,7 @@ class Board extends React.Component {
     render() {
         return (
             <div className='board'>
+                <p> Player:  {this.state.playerOneNext ? 'Harsh' : 'Saravat'} </p>
                 <div className='board-row'>
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}

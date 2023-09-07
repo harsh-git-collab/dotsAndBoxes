@@ -1,5 +1,6 @@
 import React from 'react';
 import InnerSquare from './InnerSquare';
+import { NUM_COLS, NUM_ROWS, ARR_SIZE } from './constant';
 
 class Square extends React.Component {
     // decide_class fuction returns the class of the bars and dots using props
@@ -7,7 +8,7 @@ class Square extends React.Component {
         var i = this.props.index;
         var connection_map = this.props.connections[i];
         var class_name = '';
-
+        console.log(i + "is the index for which bar class is being decide");
         if(bar_name == 'top' && connection_map.get('top') !== -1) {
             class_name += ' active';
         }
@@ -62,7 +63,7 @@ class Board extends React.Component {
         this.checkLoop = this.checkLoop.bind(this);
         this.renderSquare = this.renderSquare.bind(this);
         //temp_map is the connections namely left, bottom, right, top it has with other nodes
-        let ARR_SIZE = 75;
+        // let ARR_SIZE = 75;
         let dots = new Array(ARR_SIZE)
         
         for(let i=0; i<ARR_SIZE; i++) {
@@ -106,7 +107,8 @@ class Board extends React.Component {
         if(str == 'h') {
             console.log( "inside check loop function\n");
             // check for anticlock wise loop
-            let dot3 = dot2 - 15; // 15 is the number of cols
+            // let dot3 = dot2 - 15; // 15 is the number of cols
+            let dot3 = dot2 - NUM_COLS
             if(flag == 1) { // if flag is 1 then check anti-clockwise
                 if(dot3 >= 0) {
                     let dot4 = dot3 - 1;
@@ -129,9 +131,10 @@ class Board extends React.Component {
                 }
             }else {
                 // check for clockwise loop
-                dot3 = dot2 + 15;
+                // dot3 = dot2 + 15;
+                dot3 = dot2 + NUM_COLS;
                 
-                if(dot3 < 75) { // here 75 is the total number of dots in the game
+                if(dot3 < ARR_SIZE /*75*/) { // here 75 is the total number of dots in the game
                     let dot4 = dot3 - 1;
                 
                     if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
@@ -159,7 +162,8 @@ class Board extends React.Component {
             
             if(flag == 0){
                 if(dot3 >= 0) {
-                    let dot4 = dot3 - 15;
+                    // let dot4 = dot3 - 15;
+                    let dot4 = dot3 - NUM_COLS;
                     if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('left') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('right') == dot1) {
                         let arr = [dot1, dot2, dot3, dot4];
                         arr.sort(function(a, b){return a - b});
@@ -175,9 +179,11 @@ class Board extends React.Component {
             }else {
                 // check for anti-clockwise direction
                 dot3 = dot2 + 1;
-                let row_idx = dot3%15; // 15 number of dots in one row (no. of col in the game)
-                if(row_idx < 15) {
-                    let dot4 = dot3-15;
+                // let row_idx = dot3%15; // 15 number of dots in one row (no. of col in the game)
+                let row_idx = dot3%NUM_COLS;
+                if(row_idx < NUM_COLS /*15*/) {
+                    // let dot4 = dot3-15;
+                    let dot4 = dot3-NUM_COLS;
                     if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('right') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('left') == dot1) {
                         let arr = [dot1, dot2, dot3, dot4];
                         arr.sort(function(a, b){return a - b});
@@ -209,11 +215,15 @@ class Board extends React.Component {
         console.log(i);
         // check if the click is valid
         // here 15 is the number of columns
-        let row_idx = i%15;
+        // let row_idx = i%15;
+        let row_idx = i%NUM_COLS;
         let left_idx = (row_idx -1 < 0) ? -1 : i-1;
-        let top_idx = (i-15 < 0) ? -1 : i-15;
-        let bottom_idx = (i + 15 >= 75) ? -1 : i+15;
-        let right_idx = (row_idx + 1 >= 15) ? -1 : i+1;
+        // let top_idx = (i-15 < 0) ? -1 : i-15;
+        let top_idx = (i-NUM_COLS < 0) ? -1 : i - NUM_COLS;
+        // let bottom_idx = (i + 15 >= 75) ? -1 : i+15;
+        let bottom_idx = (i + NUM_COLS >= ARR_SIZE) ? -1 : i+NUM_COLS;
+        // let right_idx = (row_idx + 1 >= 15) ? -1 : i+1;
+        let right_idx = (row_idx + 1 >= NUM_COLS) ? -1 : i+1;
         console.log(left_idx + " " + right_idx)
         console.log(top_idx + " " + bottom_idx)
         console.log("clicked status is ", this.state.dotClicked);
@@ -222,28 +232,28 @@ class Board extends React.Component {
         // that is already connected
 
         // for top left node
-        if(i - 15 < 0 && row_idx - 1 < 0) {
+        if(i - NUM_COLS < 0 && row_idx - 1 < 0) {
             // check if the top left node is connected
             if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
                 return;
             }
         }
         // for top right most node
-        if(i - 15 < 0 && row_idx +1 >= 15) {
+        if(i - NUM_COLS < 0 && row_idx +1 >= NUM_COLS) {
             // check if the top left node is connected
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('bottom') != -1) {
                 return;
             }
         }
         // for bottom left node
-        if(i + 15 >= 75 && row_idx - 1 < 0) {
+        if(i + NUM_COLS >= ARR_SIZE && row_idx - 1 < 0) {
             // check if the top left node is connected
             if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1) {
                 return;
             }
         }
         // for bottom right node
-        if(i + 15 >= 75 && row_idx + 1 >= 15) {
+        if(i + NUM_COLS >= 75 && row_idx + 1 >= NUM_COLS) {
             // check if the top left node is connected
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1) {
                 return;
@@ -251,7 +261,7 @@ class Board extends React.Component {
         }
 
         // if  non-corner top dots
-        if(i - 15 < 0) {
+        if(i - NUM_COLS < 0) {
             // check if the top non corner dots are connected or not
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
                 return;
@@ -259,7 +269,7 @@ class Board extends React.Component {
         }
 
         // if non-corner botom dots
-        if(i + 15 >= 75) {
+        if(i + NUM_COLS >= ARR_SIZE) {
             // check if the bottom non corner dots are connected or not
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1 ) {
                 return;
@@ -275,7 +285,7 @@ class Board extends React.Component {
         }
 
         // if dot non-corner top dots
-        if(row_idx + 1 >= 15) {
+        if(row_idx + 1 >= NUM_COLS) {
             
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('bottom') != -1 ) {
                 return;
@@ -396,7 +406,7 @@ class Board extends React.Component {
                 }
 
                 // check for loop when we conect between top and bottom dots
-                if(this.state.dotClicked + 15 == i || this.state.dotClicked - 15 == i) {
+                if(this.state.dotClicked + NUM_COLS == i || this.state.dotClicked - NUM_COLS == i) {
                     let flag = 2;
                     while(flag--) {
                         let dot_obj = this.checkLoop(this.state.dotClicked, i, 'v', flag);
@@ -448,95 +458,30 @@ class Board extends React.Component {
         );
     }
 
+    renderBoard(rows, columns) {
+        const board = [];
+      
+        for (let i = 0; i < rows; i++) {
+          const row = [];
+          for (let j = 0; j < columns; j++) {
+            const squareNumber = i * columns + j;
+            row.push(this.renderSquare(squareNumber)); // this.renderSquare ultimately returns jsx elements. Should have thought it
+          }
+          board.push(
+            <div key={i} className='board-row'>
+              {row}
+            </div>
+          );
+        }
+      
+        return <div>{board}</div>;
+    }
+
     render() {
         return (
             <div className='board'>
                 <p> Player:  {this.state.playerOneNext ? 'Harsh' : 'Saravat'} </p>
-                <div className='board-row'>
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                    {this.renderSquare(9)}
-                    {this.renderSquare(10)}
-                    {this.renderSquare(11)}
-                    {this.renderSquare(12)}
-                    {this.renderSquare(13)}
-                    {this.renderSquare(14)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(15)}
-                    {this.renderSquare(16)}
-                    {this.renderSquare(17)}
-                    {this.renderSquare(18)}
-                    {this.renderSquare(19)}
-                    {this.renderSquare(20)}
-                    {this.renderSquare(21)}
-                    {this.renderSquare(22)}
-                    {this.renderSquare(23)}
-                    {this.renderSquare(24)}
-                    {this.renderSquare(25)}
-                    {this.renderSquare(26)}
-                    {this.renderSquare(27)}
-                    {this.renderSquare(28)}
-                    {this.renderSquare(29)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(30)}
-                    {this.renderSquare(31)}
-                    {this.renderSquare(32)}
-                    {this.renderSquare(33)}
-                    {this.renderSquare(34)}
-                    {this.renderSquare(35)}
-                    {this.renderSquare(36)}
-                    {this.renderSquare(37)}
-                    {this.renderSquare(38)}
-                    {this.renderSquare(39)}
-                    {this.renderSquare(40)}
-                    {this.renderSquare(41)}
-                    {this.renderSquare(42)}
-                    {this.renderSquare(43)}
-                    {this.renderSquare(44)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(45)}
-                    {this.renderSquare(46)}
-                    {this.renderSquare(47)}
-                    {this.renderSquare(48)}
-                    {this.renderSquare(49)}
-                    {this.renderSquare(50)}
-                    {this.renderSquare(51)}
-                    {this.renderSquare(52)}
-                    {this.renderSquare(53)}
-                    {this.renderSquare(54)}
-                    {this.renderSquare(55)}
-                    {this.renderSquare(56)}
-                    {this.renderSquare(57)}
-                    {this.renderSquare(58)}
-                    {this.renderSquare(59)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(60)}
-                    {this.renderSquare(61)}
-                    {this.renderSquare(62)}
-                    {this.renderSquare(63)}
-                    {this.renderSquare(64)}
-                    {this.renderSquare(65)}
-                    {this.renderSquare(66)}
-                    {this.renderSquare(67)}
-                    {this.renderSquare(68)}
-                    {this.renderSquare(69)}
-                    {this.renderSquare(70)}
-                    {this.renderSquare(71)}
-                    {this.renderSquare(72)}
-                    {this.renderSquare(73)}
-                    {this.renderSquare(74)}
-                </div>
+                <div>{this.renderBoard(NUM_ROWS, NUM_COLS)}</div>
             </div>
         );
     }

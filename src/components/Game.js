@@ -8,7 +8,6 @@ class Square extends React.Component {
         var i = this.props.index;
         var connection_map = this.props.connections[i];
         var class_name = '';
-        console.log(i + "is the index for which bar class is being decide");
         if(bar_name == 'top' && connection_map.get('top') !== -1) {
             class_name += ' active';
         }
@@ -235,6 +234,7 @@ class Board extends React.Component {
         if(i - NUM_COLS < 0 && row_idx - 1 < 0) {
             // check if the top left node is connected
             if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
+                alert("selected dot is invalid");
                 return;
             }
         }
@@ -242,6 +242,7 @@ class Board extends React.Component {
         if(i - NUM_COLS < 0 && row_idx +1 >= NUM_COLS) {
             // check if the top left node is connected
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('bottom') != -1) {
+                alert("selected dot is invalid");
                 return;
             }
         }
@@ -249,13 +250,15 @@ class Board extends React.Component {
         if(i + NUM_COLS >= ARR_SIZE && row_idx - 1 < 0) {
             // check if the top left node is connected
             if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1) {
+                alert("selected dot is invalid");
                 return;
             }
         }
         // for bottom right node
-        if(i + NUM_COLS >= 75 && row_idx + 1 >= NUM_COLS) {
+        if(i + NUM_COLS >= ARR_SIZE && row_idx + 1 >= NUM_COLS) {
             // check if the top left node is connected
             if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1) {
+                alert("selected dot is invalid");
                 return;
             }
         }
@@ -326,8 +329,36 @@ class Board extends React.Component {
             // this is the second click for making a line
             // check if it is even valid
             console.log("this is the second click for making a line");
+            let isInvalid = false;
             
             if(i === this.state.leftOfClickedDot || i === this.state.topOfClickedDot || i === this.state.bottomOfClickedDot || i === this.state.rightOfClickedDot || i === this.state.dotClicked){
+                // check if there exist a connection between the clicked dot and the dot previously clicked
+                if(i === this.state.topOfClickedDot) { // this checks if the dot in second click has a connection with dot in the first click
+                    console.log("ehhh boy")
+                    if(this.state.dots[i].get("bottom") === this.state.dotClicked && i === this.state.dots[this.state.dotClicked].get("top")) {
+                        alert("selected dot is invalid");
+                        return;
+                    }
+                }
+
+                if(i === this.state.leftOfClickedDot) {
+                    if(this.state.dots[i].get("right") === this.state.dotClicked && i === this.state.dots[this.state.dotClicked].get("left")) {
+                        alert("selected dot is invalid");
+                        return;
+                    }
+                }
+                if(i === this.state.bottomOfClickedDot) {
+                    if(this.state.dots[i].get("top") === this.state.dotClicked && i === this.state.dots[this.state.dotClicked].get("bottom")) {
+                        alert("selected dot is invalid");
+                        return;
+                    }
+                }
+                if(i === this.state.rightOfClickedDot) {
+                    if(this.state.dots[i].get("left") === this.state.dotClicked && i === this.state.dots[this.state.dotClicked].get("right")) {
+                        alert("selected dot is invalid");
+                        return;
+                    }
+                }
                 // then the click is valid
                 // update the state
                 let new_dots = this.state.dots.slice();

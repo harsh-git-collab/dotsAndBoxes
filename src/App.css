@@ -127,3 +127,19 @@
 .inner_square.playerTwo {
   background: red;
 }
+
+.absolute {
+  position: absolute;
+  height: 300px;
+  width: 300px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 13px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

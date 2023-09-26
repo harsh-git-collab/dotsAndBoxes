@@ -1,6 +1,6 @@
 import React from 'react';
 import InnerSquare from './InnerSquare';
-import { NUM_COLS, NUM_ROWS, ARR_SIZE } from './constant';
+import { NUM_COLS, NUM_ROWS, ARR_SIZE, NUM_SQR } from './constant';
 
 class Square extends React.Component {
     // decide_class fuction returns the class of the bars and dots using props
@@ -94,6 +94,10 @@ class Board extends React.Component {
             rightOfClickedDot: -1, // tells up about the right of the dot that is clicked either for the first time or the second time by a player
             dots: dots,  // dots is the array of maps. The properties of map tell us about the state of the individual square
             playerOneNext: true,
+            playerOneScore: 0,
+            playerTwoScore: 0,
+            winner: '',
+            gameOver: false,
         }
         
 
@@ -206,6 +210,9 @@ class Board extends React.Component {
     }
 
     handleClick = (i) => {
+        if(this.state.gameOver == true) {
+            return;
+        }
         if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
             // that means the dot is connected 4 directionally. So this click is invalid
             return;
@@ -412,6 +419,8 @@ class Board extends React.Component {
                 
                 // check for loops when dots connected are horizontal
                 let box_was_cnqrd = false;
+                let playerOneScore = 0;
+                let playerTwoScore = 0;
 
                 if(this.state.dotClicked + 1 == i || this.state.dotClicked -1 == i) {
                     console.log("horizontal clicking");
@@ -426,6 +435,11 @@ class Board extends React.Component {
                             console.log(dot_obj);
                             box_was_cnqrd = true;
                             let player = this.state.playerOneNext ? 1 : 2;
+                            if(player == 1) {
+                                playerOneScore += 1;
+                            }else {
+                                playerTwoScore += 1;
+                            }
                             // now change the status in the new dots
                             new_dots[dot_obj.dot1].set('sqr_4', player);
                             new_dots[dot_obj.dot2].set('sqr_3', player);
@@ -448,6 +462,11 @@ class Board extends React.Component {
                             console.log(dot_obj)
                             box_was_cnqrd = true;
                             let player = this.state.playerOneNext ? 1 : 2;
+                            if(player == 1) {
+                                playerOneScore += 1;
+                            }else {
+                                playerTwoScore += 1;
+                            }
                             // now change the status in the new dots
                             new_dots[dot_obj.dot1].set('sqr_4', player);
                             new_dots[dot_obj.dot2].set('sqr_3', player);
@@ -457,7 +476,7 @@ class Board extends React.Component {
                         }
                     }
                 }
-                console.log("the box was conqured value is ", box_was_cnqrd);
+
                 this.setState({
                     dotClicked: -1,
                     leftOfClickedDot: -1,
@@ -466,6 +485,10 @@ class Board extends React.Component {
                     rightOfClickedDot: -1,
                     playerOneNext: ( box_was_cnqrd )   ? ( this.state.playerOneNext )  : (this.state.playerOneNext ? false : true),
                     dots: new_dots,
+                    playerOneScore: this.state.playerOneScore + playerOneScore,
+                    playerTwoScore: this.state.playerTwoScore + playerTwoScore,
+                    gameOver: (this.state.playerOneScore + playerOneScore + this.state.playerTwoScore + playerTwoScore == NUM_SQR) ? true : false,
+                    winner : (this.state.playerOneScore + playerOneScore == this.state.playerTwoScore + playerTwoScore) ? 'Tie' : ((this.state.playerOneScore + playerOneScore > this.state.playerTwoScore + playerTwoScore) ? 'Harsh' : 'Saravat'),
                 });
             }else {
                 alert("The selected dot is invalid")
@@ -510,10 +533,25 @@ class Board extends React.Component {
 
     render() {
         return (
+            <>
+            {this.state.gameOver && (
+                <div class="absolute"> 
+                    Game Over!!!
+                    <p> Harsh Score: {this.state.playerOneScore} | Saravat Score: {this.state.playerTwoScore}</p>
+                    {(this.state.winner === 'Tie') && (
+                        <p> There was a tie </p>
+                    )}
+                    {(this.state.winner !== 'Tie') && (
+                        <p> Congratulations!! {this.state.winner}</p>
+                    )}
+                </div>
+            )}
             <div className='board'>
+                <p> Harsh Score: {this.state.playerOneScore} | Saravat Score: {this.state.playerTwoScore}</p>
                 <p> Player:  {this.state.playerOneNext ? 'Harsh' : 'Saravat'} </p>
                 <div>{this.renderBoard(NUM_ROWS, NUM_COLS)}</div>
             </div>
+            </>
         );
     }
 }

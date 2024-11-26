@@ -42,7 +42,7 @@ class Square extends React.Component {
             <div className="square">
                 <div className={'bar top ' + this.decide_class('top')}></div>
                 <div className={'bar left' + this.decide_class('left')}></div>
-                <div className={'bar bottom' + this.decide_class('bottom')}></div>
+                <div className={'bar bottom ' + this.decide_class('bottom')}></div>
                 <div className={'bar right' + this.decide_class('right')}></div>
                 <div className={'dot ' + this.decide_class('dot')} onClick={this.props.onClick}></div>
                 <InnerSquare index={this.props.index} position="1" property_map={this.props.connections[this.props.index]}  player={this.props.player}/>

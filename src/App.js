@@ -1,12 +1,13 @@
+import Navbar from './components/Navbar.js';
 import Game from './components/Game.js';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <h1>DOTS AND BOXES</h1>
+    <>
+      <Navbar />
       <Game />
-    </div>
+    </>
   );
 }
 

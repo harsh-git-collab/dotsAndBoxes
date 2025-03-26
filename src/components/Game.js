@@ -22,6 +22,7 @@ class Game extends React.Component {
                         playerOneScore={this.props.playerOneScore}
                         playerTwoScore={this.props.playerTwoScore}
                         winner={this.props.winner}
+                        handleClick={this.props.handleClick}
                     />
                 </div>
             </div>

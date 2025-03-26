@@ -10,6 +10,7 @@ class App extends React.Component {
     super(props);
 
     this.handleClick = this.handleClick.bind(this);
+    this.checkLoop = this.checkLoop.bind(this);
     //temp_map is the connections namely left, bottom, right, top it has with other nodes
     // let ARR_SIZE = 75;
     let dots = new Array(ARR_SIZE)
@@ -48,11 +49,119 @@ class App extends React.Component {
 
   }
 
+  checkLoop(i, j, str, flag){
+    let dot1 = Math.min(i, j);
+    let dot2 = dot1 == i ? j : i;
+
+    if(str == 'h') {
+        console.log( "inside check loop function\n");
+        // check for anticlock wise loop
+        // let dot3 = dot2 - 15; // 15 is the number of cols
+        let dot3 = dot2 - NUM_COLS
+        if(flag == 1) { // if flag is 1 then check anti-clockwise
+            if(dot3 >= 0) {
+                let dot4 = dot3 - 1;
+                if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('top') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('bottom') == dot1 ) {
+                    // the above condition satifies then
+                    // an anti clockwise loop is being made
+                    // in which case we could return an object
+                    let arr = [dot1, dot2, dot3, dot4];
+                    arr.sort(function(a, b){return a - b});
+                    console.log("returning for anticlockwise loop");
+                    console.log(arr);
+                    return {
+                        'status': true,
+                        'dot1': arr[0],
+                        'dot2': arr[1],
+                        'dot3': arr[2],
+                        'dot4': arr[3],
+                    }
+                }
+            }
+        }else {
+            // check for clockwise loop
+            // dot3 = dot2 + 15;
+            dot3 = dot2 + NUM_COLS;
+            
+            if(dot3 < ARR_SIZE /*75*/) { // here 75 is the total number of dots in the game
+                let dot4 = dot3 - 1;
+            
+                if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
+                    let arr = [dot1, dot2, dot3, dot4];
+                    arr.sort(function(a, b){return a - b});
+                    return {
+                        'status': true,
+                        'dot1': arr[0],
+                        'dot2': arr[1],
+                        'dot3': arr[2],
+                        'dot4': arr[3],
+                    }
+                }
+            }
+        }
+        
+         
+
+        return {'status': false};
+        
+    }else {
+        // check for loop in case of two dots connecting vertically
+        // check for clockwise loop
+        let dot3 = dot2 - 1;
+        
+        if(flag == 0){
+            if(dot3 >= 0) {
+                // let dot4 = dot3 - 15;
+                let dot4 = dot3 - NUM_COLS;
+                if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('left') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('right') == dot1) {
+                    let arr = [dot1, dot2, dot3, dot4];
+                    arr.sort(function(a, b){return a - b});
+                    return {
+                        'status': true,
+                        'dot1': arr[0],
+                        'dot2': arr[1],
+                        'dot3': arr[2],
+                        'dot4': arr[3],
+                    }
+                }
+            }
+        }else {
+            // check for anti-clockwise direction
+            dot3 = dot2 + 1;
+            // let row_idx = dot3%15; // 15 number of dots in one row (no. of col in the game)
+            let row_idx = dot3%NUM_COLS;
+            if(row_idx < NUM_COLS /*15*/) {
+                // let dot4 = dot3-15;
+                let dot4 = dot3-NUM_COLS;
+                if(this.state.dots[dot1].get('bottom') == dot2 && this.state.dots[dot2].get('right') == dot3 && this.state.dots[dot3].get('top') == dot4 && this.state.dots[dot4].get('left') == dot1) {
+                    let arr = [dot1, dot2, dot3, dot4];
+                    arr.sort(function(a, b){return a - b});
+                    return {
+                        'status': true,
+                        'dot1': arr[0],
+                        'dot2': arr[1],
+                        'dot3': arr[2],
+                        'dot4': arr[3],
+                    }
+                }
+            }
+        }
+
+        
+
+        return {'status': false};
+        
+    }
+    
+}
+
+
+
   handleClick = (i) => {
-    if(this.props.gameOver == true) {
+    if(this.state.gameOver == true) {
         return;
     }
-    if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1) {
+    if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
         // that means the dot is connected 4 directionally. So this click is invalid
         return;
     }
@@ -71,7 +180,7 @@ class App extends React.Component {
     let right_idx = (row_idx + 1 >= NUM_COLS) ? -1 : i+1;
     console.log(left_idx + " " + right_idx)
     console.log(top_idx + " " + bottom_idx)
-    console.log("clicked status is ", this.props.dotClicked);
+    console.log("clicked status is ", this.state.dotClicked);
 
     // this is an additional check if we have clicked on a peripheral node
     // that is already connected
@@ -79,7 +188,7 @@ class App extends React.Component {
     // for top left node
     if(i - NUM_COLS < 0 && row_idx - 1 < 0) {
         // check if the top left node is connected
-        if(this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1) {
+        if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
             alert("selected dot is invalid");
             return;
         }
@@ -87,7 +196,7 @@ class App extends React.Component {
     // for top right most node
     if(i - NUM_COLS < 0 && row_idx +1 >= NUM_COLS) {
         // check if the top left node is connected
-        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('bottom') != -1) {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('bottom') != -1) {
             alert("selected dot is invalid");
             return;
         }
@@ -95,7 +204,7 @@ class App extends React.Component {
     // for bottom left node
     if(i + NUM_COLS >= ARR_SIZE && row_idx - 1 < 0) {
         // check if the top left node is connected
-        if(this.props.dots[i].get('right') != -1 && this.props.dots[i].get('top') != -1) {
+        if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1) {
             alert("selected dot is invalid");
             return;
         }
@@ -103,7 +212,7 @@ class App extends React.Component {
     // for bottom right node
     if(i + NUM_COLS >= ARR_SIZE && row_idx + 1 >= NUM_COLS) {
         // check if the top left node is connected
-        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1) {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1) {
             alert("selected dot is invalid");
             return;
         }
@@ -112,7 +221,7 @@ class App extends React.Component {
     // if  non-corner top dots
     if(i - NUM_COLS < 0) {
         // check if the top non corner dots are connected or not
-        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1 ) {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
             return;
         }
     }
@@ -120,7 +229,7 @@ class App extends React.Component {
     // if non-corner botom dots
     if(i + NUM_COLS >= ARR_SIZE) {
         // check if the bottom non corner dots are connected or not
-        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('top') != -1 ) {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1 ) {
             return;
         }
     }
@@ -128,7 +237,7 @@ class App extends React.Component {
     // check if left most column non corner dots are connected or not
     if(row_idx - 1 < 0) {
         
-        if(this.props.dots[i].get('top') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1 ) {
+        if(this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
             return;
         }
     }
@@ -136,13 +245,13 @@ class App extends React.Component {
     // if dot non-corner top dots
     if(row_idx + 1 >= NUM_COLS) {
         
-        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1 && this.props.dots[i].get('bottom') != -1 ) {
+        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('bottom') != -1 ) {
             return;
         }
     }
 
     // check if the click is even valid
-    if(this.props.dotClicked == -1){
+    if(this.state.dotClicked == -1){
         // this is the first click
         console.log("here we are first clicked");
         // highlight those dots which are not yet connected
@@ -355,7 +464,7 @@ class App extends React.Component {
           playerOneScore={this.state.playerOneScore}
           playerTwoScore={this.state.playerTwoScore}
           winner={this.state.winner}
-          handleClick={this.state.handleClick}
+          handleClick={this.handleClick}
         />
       </>
     )

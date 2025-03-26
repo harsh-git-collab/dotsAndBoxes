@@ -6,22 +6,27 @@ import { GiHamburgerMenu } from "react-icons/gi";
 
 import './NavbarStyles.css';
 
-const Navbar = () => {
-    return (
-        <header>
-            <div className='container'>
-                <div id='logo'>Dots&Boxes</div>
-                <ul className='nav-menu'>
-                    <li><IoIosSettings /></li>
-                    <li><MdOutlineReplay /></li>
-                    <li><FaQuestionCircle /></li>
-                </ul>
-                <div className='hamburger'>
-                    <GiHamburgerMenu />
+class Navbar extends React.Component{
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return (
+            <header>
+                <div className='container'>
+                    <div id='logo'>Dots&Boxes</div>
+                    <ul className='nav-menu'>
+                        <li><IoIosSettings /></li>
+                        <li onClick={this.props.onClick}><MdOutlineReplay /></li>
+                        <li><FaQuestionCircle /></li>
+                    </ul>
+                    <div className='hamburger'>
+                        <GiHamburgerMenu />
+                    </div>
                 </div>
-            </div>
-        </header>
-    )
+            </header>
+        )
+    }
 }
 
 export default Navbar;

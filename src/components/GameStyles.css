@@ -1,23 +1,21 @@
 .main {
     position: relative;
-    
 }
 
 .main .container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
     height: 100%;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
 }
 
 .board {
-    /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    justify-content: center;
+    margin-left: 4rem;
   }
   
   .board-row {
@@ -133,5 +131,20 @@
   
   .inner_square.playerTwo {
     background: red;
+  }
+
+  @media  screen and (max-width: 680px) {
+    
+    .main .container {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .board {
+      margin: 1.5rem 0 ;
+    }
+    
   }
   

@@ -4,13 +4,7 @@ import Game from './components/Game.js';
 import './App.css';
 import { NUM_COLS, NUM_ROWS, ARR_SIZE, NUM_SQR } from '../src/components/constant.js';
 
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.handleClick = this.handleClick.bind(this);
-    this.checkLoop = this.checkLoop.bind(this);
+function makeDotsArray() {
     //temp_map is the connections namely left, bottom, right, top it has with other nodes
     // let ARR_SIZE = 75;
     let dots = new Array(ARR_SIZE)
@@ -32,14 +26,25 @@ class App extends React.Component {
         ])
         dots[i] = temp_map;
     }
+    return dots;
+}
 
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+    this.checkLoop = this.checkLoop.bind(this);
+    this.replay = this.replay.bind(this);
+   
     this.state = {
       dotClicked: -1, // tells up about the dot that is clicked either for the first time or the second time by a player
       leftOfClickedDot: -1, // tells up about the left of the dot that is clicked either for the first time or the second time by a player
       topOfClickedDot: -1, // tells up about the top of the dot that is clicked either for the first time or the second time by a player
       bottomOfClickedDot: -1, // tells up about the bottom of the dot that is clicked either for the first time or the second time by a player
       rightOfClickedDot: -1, // tells up about the right of the dot that is clicked either for the first time or the second time by a player
-      dots: dots,  // dots is the array of maps. The properties of map tell us about the state of the individual square
+      dots: makeDotsArray(),  // dots is the array of maps. The properties of map tell us about the state of the individual square
       playerOneNext: true,
       playerOneScore: 0,
       playerTwoScore: 0,
@@ -47,6 +52,23 @@ class App extends React.Component {
       gameOver: false,
     }
 
+  }
+
+  replay() {
+    
+    this.setState({
+        dotClicked: -1, 
+        leftOfClickedDot: -1,
+        topOfClickedDot: -1,
+        bottomOfClickedDot: -1, 
+        rightOfClickedDot: -1,
+        dots: makeDotsArray(),  
+        playerOneNext: true,
+        playerOneScore: 0,
+        playerTwoScore: 0,
+        winner: '',
+        gameOver: false,
+    })
   }
 
   checkLoop(i, j, str, flag){
@@ -457,7 +479,9 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <Navbar />
+        <Navbar 
+            onClick={this.replay}
+        />
         <Game 
           dots={this.state.dots} 
           gameOver={this.state.gameOver}
@@ -465,6 +489,7 @@ class App extends React.Component {
           playerTwoScore={this.state.playerTwoScore}
           winner={this.state.winner}
           handleClick={this.handleClick}
+          playerOneNext={this.state.playerOneNext}
         />
       </>
     )

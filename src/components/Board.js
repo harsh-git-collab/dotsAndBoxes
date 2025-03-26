@@ -48,8 +48,6 @@ export default class Board extends React.Component {
                 </div>
             )}
             <div className='board'>
-                <p> Harsh Score: {this.props.playerOneScore} | Saravat Score: {this.props.playerTwoScore}</p>
-                <p> Player:  {this.props.playerOneNext ? 'Harsh' : 'Saravat'} </p>
                 <div>{this.renderBoard(NUM_ROWS, NUM_COLS)}</div>
             </div>
             </>

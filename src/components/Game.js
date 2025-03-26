@@ -1,5 +1,4 @@
 import React from 'react';
-import InnerSquare from './InnerSquare';
 import InfoPanel from './InfoPanel.js';
 import Board from './Board.js';
 import './GameStyles.css';
@@ -15,7 +14,11 @@ class Game extends React.Component {
         return (
             <div className='main'>
                 <div className='container'>
-                    <InfoPanel />
+                    <InfoPanel 
+                        playerOneScore={this.props.playerOneScore}
+                        playerTwoScore={this.props.playerTwoScore}
+                        playerOneNext={this.props.playerOneNext}
+                    />
                     <Board 
                         dots={this.props.dots} 
                         gameOver={this.props.gameOver}

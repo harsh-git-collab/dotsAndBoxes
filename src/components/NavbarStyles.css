@@ -6,7 +6,8 @@ header {
 
 #logo {
     font-size: 2rem;
-    font-weight: 500;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 header .container {
@@ -24,6 +25,11 @@ header .container {
     padding: 0 1rem;
     font-size: 2rem;
     cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-menu li:hover {
+    transform: scale(1.2);
 }
 
 .hamburger {

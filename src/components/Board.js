@@ -9,46 +9,9 @@ export default class Board extends React.Component {
         this.handleClick = this.handleClick.bind(this);
         this.checkLoop = this.checkLoop.bind(this);
         this.renderSquare = this.renderSquare.bind(this);
-        //temp_map is the connections namely left, bottom, right, top it has with other nodes
-        // let ARR_SIZE = 75;
-        let dots = new Array(ARR_SIZE)
         
-        for(let i=0; i<ARR_SIZE; i++) {
-            const temp_map = new Map([
-                ['top', -1], // top signifies if the dot in the center of the 
-                // square is coonected to dot above it
-                ['left', -1],
-                ['bottom', -1],
-                ['right', -1],
-                ['highlight', false], // highlight property is used to highlight the dot 
-                // in the center of the square when clicked by a user
-                ['sqr_1', -1], // repreents the state of inner_squares component 1 2 3 4 in clockwise direction,
-                // starting from top left inner_square
-                ['sqr_2', -1],
-                ['sqr_3', -1],
-                ['sqr_4', -1],   
-            ])
-            dots[i] = temp_map;
-        }
         
-        // dots[25].set('left', 24);
-        // dots[24].set('right', 25);
-
-        this.state = {
-            dotClicked: -1, // tells up about the dot that is clicked either for the first time or the second time by a player
-            leftOfClickedDot: -1, // tells up about the left of the dot that is clicked either for the first time or the second time by a player
-            topOfClickedDot: -1, // tells up about the top of the dot that is clicked either for the first time or the second time by a player
-            bottomOfClickedDot: -1, // tells up about the bottom of the dot that is clicked either for the first time or the second time by a player
-            rightOfClickedDot: -1, // tells up about the right of the dot that is clicked either for the first time or the second time by a player
-            dots: dots,  // dots is the array of maps. The properties of map tell us about the state of the individual square
-            playerOneNext: true,
-            playerOneScore: 0,
-            playerTwoScore: 0,
-            winner: '',
-            gameOver: false,
-        }
         
-
     }
 
     checkLoop(i, j, str, flag){
@@ -158,10 +121,10 @@ export default class Board extends React.Component {
     }
 
     handleClick = (i) => {
-        if(this.state.gameOver == true) {
+        if(this.props.gameOver == true) {
             return;
         }
-        if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
+        if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1) {
             // that means the dot is connected 4 directionally. So this click is invalid
             return;
         }
@@ -180,7 +143,7 @@ export default class Board extends React.Component {
         let right_idx = (row_idx + 1 >= NUM_COLS) ? -1 : i+1;
         console.log(left_idx + " " + right_idx)
         console.log(top_idx + " " + bottom_idx)
-        console.log("clicked status is ", this.state.dotClicked);
+        console.log("clicked status is ", this.props.dotClicked);
 
         // this is an additional check if we have clicked on a peripheral node
         // that is already connected
@@ -188,7 +151,7 @@ export default class Board extends React.Component {
         // for top left node
         if(i - NUM_COLS < 0 && row_idx - 1 < 0) {
             // check if the top left node is connected
-            if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1) {
+            if(this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1) {
                 alert("selected dot is invalid");
                 return;
             }
@@ -196,7 +159,7 @@ export default class Board extends React.Component {
         // for top right most node
         if(i - NUM_COLS < 0 && row_idx +1 >= NUM_COLS) {
             // check if the top left node is connected
-            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('bottom') != -1) {
+            if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('bottom') != -1) {
                 alert("selected dot is invalid");
                 return;
             }
@@ -204,7 +167,7 @@ export default class Board extends React.Component {
         // for bottom left node
         if(i + NUM_COLS >= ARR_SIZE && row_idx - 1 < 0) {
             // check if the top left node is connected
-            if(this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1) {
+            if(this.props.dots[i].get('right') != -1 && this.props.dots[i].get('top') != -1) {
                 alert("selected dot is invalid");
                 return;
             }
@@ -212,7 +175,7 @@ export default class Board extends React.Component {
         // for bottom right node
         if(i + NUM_COLS >= ARR_SIZE && row_idx + 1 >= NUM_COLS) {
             // check if the top left node is connected
-            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1) {
+            if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1) {
                 alert("selected dot is invalid");
                 return;
             }
@@ -221,7 +184,7 @@ export default class Board extends React.Component {
         // if  non-corner top dots
         if(i - NUM_COLS < 0) {
             // check if the top non corner dots are connected or not
-            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+            if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1 ) {
                 return;
             }
         }
@@ -229,7 +192,7 @@ export default class Board extends React.Component {
         // if non-corner botom dots
         if(i + NUM_COLS >= ARR_SIZE) {
             // check if the bottom non corner dots are connected or not
-            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('top') != -1 ) {
+            if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('top') != -1 ) {
                 return;
             }
         }
@@ -237,7 +200,7 @@ export default class Board extends React.Component {
         // check if left most column non corner dots are connected or not
         if(row_idx - 1 < 0) {
             
-            if(this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+            if(this.props.dots[i].get('top') != -1 && this.props.dots[i].get('right') != -1 && this.props.dots[i].get('bottom') != -1 ) {
                 return;
             }
         }
@@ -245,13 +208,13 @@ export default class Board extends React.Component {
         // if dot non-corner top dots
         if(row_idx + 1 >= NUM_COLS) {
             
-            if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('bottom') != -1 ) {
+            if(this.props.dots[i].get('left') != -1 && this.props.dots[i].get('top') != -1 && this.props.dots[i].get('bottom') != -1 ) {
                 return;
             }
         }
 
         // check if the click is even valid
-        if(this.state.dotClicked == -1){
+        if(this.props.dotClicked == -1){
             // this is the first click
             console.log("here we are first clicked");
             // highlight those dots which are not yet connected
@@ -456,7 +419,7 @@ export default class Board extends React.Component {
 
     renderSquare(i) {
         return (
-            <Square index={i} connections={this.state.dots} onClick={() => this.handleClick(i)} player={this.state.playerOneNext}/>
+            <Square index={i} connections={this.props.dots} onClick={() => this.handleClick(i)} player={this.props.playerOneNext}/>
         );
     }
 
@@ -482,21 +445,21 @@ export default class Board extends React.Component {
     render() {
         return (
             <>
-            {this.state.gameOver && (
+            {this.props.gameOver && (
                 <div class="absolute"> 
                     Game Over!!!
-                    <p> Harsh Score: {this.state.playerOneScore} | Saravat Score: {this.state.playerTwoScore}</p>
-                    {(this.state.winner === 'Tie') && (
+                    <p> Harsh Score: {this.props.playerOneScore} | Saravat Score: {this.props.playerTwoScore}</p>
+                    {(this.props.winner === 'Tie') && (
                         <p> There was a tie </p>
                     )}
-                    {(this.state.winner !== 'Tie') && (
-                        <p> Congratulations!! {this.state.winner}</p>
+                    {(this.props.winner !== 'Tie') && (
+                        <p> Congratulations!! {this.props.winner}</p>
                     )}
                 </div>
             )}
             <div className='board'>
-                <p> Harsh Score: {this.state.playerOneScore} | Saravat Score: {this.state.playerTwoScore}</p>
-                <p> Player:  {this.state.playerOneNext ? 'Harsh' : 'Saravat'} </p>
+                <p> Harsh Score: {this.props.playerOneScore} | Saravat Score: {this.props.playerTwoScore}</p>
+                <p> Player:  {this.props.playerOneNext ? 'Harsh' : 'Saravat'} </p>
                 <div>{this.renderBoard(NUM_ROWS, NUM_COLS)}</div>
             </div>
             </>

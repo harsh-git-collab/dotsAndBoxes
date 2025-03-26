@@ -8,12 +8,21 @@ import './GameStyles.css';
 
 
 class Game extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
         return (
             <div className='main'>
                 <div className='container'>
                     <InfoPanel />
-                    <Board />
+                    <Board 
+                        dots={this.props.dots} 
+                        gameOver={this.props.gameOver}
+                        playerOneScore={this.props.playerOneScore}
+                        playerTwoScore={this.props.playerTwoScore}
+                        winner={this.props.winner}
+                    />
                 </div>
             </div>
         )

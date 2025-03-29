@@ -3,6 +3,7 @@ import Navbar from './components/Navbar.js';
 import Game from './components/Game.js';
 import './App.css';
 import { NUM_COLS, NUM_ROWS, ARR_SIZE, NUM_SQR } from '../src/components/constant.js';
+import ReplayPopup from './components/ReplayPopup.js';
 
 function makeDotsArray() {
     //temp_map is the connections namely left, bottom, right, top it has with other nodes
@@ -36,7 +37,7 @@ class App extends React.Component {
 
     this.handleClick = this.handleClick.bind(this);
     this.checkLoop = this.checkLoop.bind(this);
-    this.replay = this.replay.bind(this);
+    this.handleReplayClick = this.handleReplayClick.bind(this);
    
     this.state = {
       dotClicked: -1, // tells up about the dot that is clicked either for the first time or the second time by a player
@@ -50,25 +51,37 @@ class App extends React.Component {
       playerTwoScore: 0,
       winner: '',
       gameOver: false,
+      replayPopup: false,
     }
 
   }
 
-  replay() {
-    
-    this.setState({
-        dotClicked: -1, 
-        leftOfClickedDot: -1,
-        topOfClickedDot: -1,
-        bottomOfClickedDot: -1, 
-        rightOfClickedDot: -1,
-        dots: makeDotsArray(),  
-        playerOneNext: true,
-        playerOneScore: 0,
-        playerTwoScore: 0,
-        winner: '',
-        gameOver: false,
-    })
+  handleReplayClick(condition) {
+    console.log(condition)
+    if(condition === "showpopup") {
+        this.setState({
+            replayPopup: true
+        })
+    }else if(condition === "yes") {
+        this.setState({
+            dotClicked: -1, 
+            leftOfClickedDot: -1,
+            topOfClickedDot: -1,
+            bottomOfClickedDot: -1, 
+            rightOfClickedDot: -1,
+            dots: makeDotsArray(),  
+            playerOneNext: true,
+            playerOneScore: 0,
+            playerTwoScore: 0,
+            winner: '',
+            gameOver: false,
+            replayPopup: false
+        })
+    }else {
+        this.setState({
+            replayPopup: false,
+        })
+    } 
   }
 
   checkLoop(i, j, str, flag){
@@ -480,7 +493,7 @@ class App extends React.Component {
     return (
       <>
         <Navbar 
-            onClick={this.replay}
+            onReplayClick={() => {this.handleReplayClick("showpopup")}}
         />
         <Game 
           dots={this.state.dots} 
@@ -491,6 +504,7 @@ class App extends React.Component {
           handleClick={this.handleClick}
           playerOneNext={this.state.playerOneNext}
         />
+        <ReplayPopup trigger={this.state.replayPopup}  handleReplayClick={this.handleReplayClick}/>
       </>
     )
   }

@@ -16,8 +16,7 @@ class Navbar extends React.Component{
                 <div className='container'>
                     <div id='logo'>Dots&Boxes</div>
                     <ul className='nav-menu'>
-                        <li><IoIosSettings /></li>
-                        <li onClick={this.props.onClick}><MdOutlineReplay /></li>
+                        <li onClick={this.props.onReplayClick}><MdOutlineReplay /></li>
                         <li><FaQuestionCircle /></li>
                     </ul>
                     <div className='hamburger'>

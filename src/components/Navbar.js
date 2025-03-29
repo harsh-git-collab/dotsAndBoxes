@@ -1,14 +1,22 @@
 import React from 'react';
-import { IoIosSettings } from "react-icons/io";
 import { MdOutlineReplay } from "react-icons/md";
 import { FaQuestionCircle } from "react-icons/fa";
-import { GiHamburgerMenu } from "react-icons/gi";
 
+import InfoPopup from './InfoPopup.js'
 import './NavbarStyles.css';
 
 class Navbar extends React.Component{
     constructor(props) {
         super(props);
+        this.howToClick = this.howToClick.bind(this);
+        
+        this.state = {
+            infoPopup: true
+        }
+    }
+
+    howToClick() {
+        this.setState({infoPopup: !this.state.infoPopup});
     }
     render() {
         return (
@@ -17,12 +25,10 @@ class Navbar extends React.Component{
                     <div id='logo'>Dots&Boxes</div>
                     <ul className='nav-menu'>
                         <li onClick={this.props.onReplayClick}><MdOutlineReplay /></li>
-                        <li><FaQuestionCircle /></li>
+                        <li onClick={this.howToClick}><FaQuestionCircle /></li>
                     </ul>
-                    <div className='hamburger'>
-                        <GiHamburgerMenu />
-                    </div>
                 </div>
+                <InfoPopup trigger={this.state.infoPopup} onClick={this.howToClick} />
             </header>
         )
     }

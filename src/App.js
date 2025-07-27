@@ -9,24 +9,25 @@ function makeDotsArray() {
     //temp_map is the connections namely left, bottom, right, top it has with other nodes
     // let ARR_SIZE = 75;
     let dots = new Array(ARR_SIZE)
-            
+
     for(let i=0; i<ARR_SIZE; i++) {
         const temp_map = new Map([
-            ['top', -1], // top signifies if the dot in the center of the 
+            ['top', -1], // top signifies if the dot in the center of the
             // square is coonected to dot above it
             ['left', -1],
             ['bottom', -1],
             ['right', -1],
-            ['highlight', false], // highlight property is used to highlight the dot 
+            ['highlight', false], // highlight property is used to highlight the dot
             // in the center of the square when clicked by a user
             ['sqr_1', -1], // repreents the state of inner_squares component 1 2 3 4 in clockwise direction,
             // starting from top left inner_square
             ['sqr_2', -1],
             ['sqr_3', -1],
-            ['sqr_4', -1],   
+            ['sqr_4', -1],
         ])
         dots[i] = temp_map;
     }
+    console.log(dots)
     return dots;
 }
 
@@ -38,7 +39,7 @@ class App extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.checkLoop = this.checkLoop.bind(this);
     this.handleReplayClick = this.handleReplayClick.bind(this);
-   
+
     this.state = {
       dotClicked: -1, // tells up about the dot that is clicked either for the first time or the second time by a player
       leftOfClickedDot: -1, // tells up about the left of the dot that is clicked either for the first time or the second time by a player
@@ -64,12 +65,12 @@ class App extends React.Component {
         })
     }else if(condition === "yes") {
         this.setState({
-            dotClicked: -1, 
+            dotClicked: -1,
             leftOfClickedDot: -1,
             topOfClickedDot: -1,
-            bottomOfClickedDot: -1, 
+            bottomOfClickedDot: -1,
             rightOfClickedDot: -1,
-            dots: makeDotsArray(),  
+            dots: makeDotsArray(),
             playerOneNext: true,
             playerOneScore: 0,
             playerTwoScore: 0,
@@ -81,7 +82,7 @@ class App extends React.Component {
         this.setState({
             replayPopup: false,
         })
-    } 
+    }
   }
 
   checkLoop(i, j, str, flag){
@@ -117,10 +118,10 @@ class App extends React.Component {
             // check for clockwise loop
             // dot3 = dot2 + 15;
             dot3 = dot2 + NUM_COLS;
-            
+
             if(dot3 < ARR_SIZE /*75*/) { // here 75 is the total number of dots in the game
                 let dot4 = dot3 - 1;
-            
+
                 if(this.state.dots[dot1].get('right') == dot2 && this.state.dots[dot2].get('bottom') == dot3 && this.state.dots[dot3].get('left') == dot4 && this.state.dots[dot4].get('top') == dot1) {
                     let arr = [dot1, dot2, dot3, dot4];
                     arr.sort(function(a, b){return a - b});
@@ -134,16 +135,16 @@ class App extends React.Component {
                 }
             }
         }
-        
-         
+
+
 
         return {'status': false};
-        
+
     }else {
         // check for loop in case of two dots connecting vertically
         // check for clockwise loop
         let dot3 = dot2 - 1;
-        
+
         if(flag == 0){
             if(dot3 >= 0) {
                 // let dot4 = dot3 - 15;
@@ -182,12 +183,12 @@ class App extends React.Component {
             }
         }
 
-        
+
 
         return {'status': false};
-        
+
     }
-    
+
 }
 
 
@@ -271,7 +272,7 @@ class App extends React.Component {
 
     // check if left most column non corner dots are connected or not
     if(row_idx - 1 < 0) {
-        
+
         if(this.state.dots[i].get('top') != -1 && this.state.dots[i].get('right') != -1 && this.state.dots[i].get('bottom') != -1 ) {
             return;
         }
@@ -279,7 +280,7 @@ class App extends React.Component {
 
     // if dot non-corner top dots
     if(row_idx + 1 >= NUM_COLS) {
-        
+
         if(this.state.dots[i].get('left') != -1 && this.state.dots[i].get('top') != -1 && this.state.dots[i].get('bottom') != -1 ) {
             return;
         }
@@ -293,7 +294,7 @@ class App extends React.Component {
         let new_dots = this.state.dots.slice();
 
         new_dots[i].set('highlight', true);
-        
+
         if(left_idx != -1 && this.state.dots[i].get('left') == -1){
             new_dots[left_idx].set('highlight', true);
         }
@@ -314,13 +315,13 @@ class App extends React.Component {
             rightOfClickedDot: right_idx,
             dots: new_dots,
         });
-        
+
     }else {
         // this is the second click for making a line
         // check if it is even valid
         console.log("this is the second click for making a line");
         let isInvalid = false;
-        
+
         if(i === this.state.leftOfClickedDot || i === this.state.topOfClickedDot || i === this.state.bottomOfClickedDot || i === this.state.rightOfClickedDot || i === this.state.dotClicked){
             // check if there exist a connection between the clicked dot and the dot previously clicked
             if(i === this.state.topOfClickedDot) { // this checks if the dot in second click has a connection with dot in the first click
@@ -371,7 +372,7 @@ class App extends React.Component {
             // cannot take turns
 
             if(i === this.state.dotClicked) {
-                // that means that the same dot was clicked twice 
+                // that means that the same dot was clicked twice
                 // so we do all the necessary state changes here and return from the function
                 this.setState({
                     dotClicked: -1,
@@ -399,7 +400,7 @@ class App extends React.Component {
                 new_dots[i].set('top', this.state.dotClicked);
                 new_dots[this.state.dotClicked].set('bottom', i);
             }
-            
+
             // check for loops when dots connected are horizontal
             let box_was_cnqrd = false;
             let playerOneScore = 0;
@@ -428,7 +429,7 @@ class App extends React.Component {
                         new_dots[dot_obj.dot2].set('sqr_3', player);
                         new_dots[dot_obj.dot3].set('sqr_2', player);
                         new_dots[dot_obj.dot4].set('sqr_1', player);
-                        
+
                     }
                 }
             }
@@ -455,7 +456,7 @@ class App extends React.Component {
                         new_dots[dot_obj.dot2].set('sqr_3', player);
                         new_dots[dot_obj.dot3].set('sqr_2', player);
                         new_dots[dot_obj.dot4].set('sqr_1', player);
-                        
+
                     }
                 }
             }
@@ -476,27 +477,27 @@ class App extends React.Component {
         }else {
             alert("The selected dot is invalid")
         }
-        
+
         // check if all corner are connected
-        
+
     }
 
     // check if a previous dot was clicked
-    
+
 
     // for experiment purpose only
-    
-    
+
+
 }
 
   render() {
     return (
       <>
-        <Navbar 
+        <Navbar
             onReplayClick={() => {this.handleReplayClick("showpopup")}}
         />
-        <Game 
-          dots={this.state.dots} 
+        <Game
+          dots={this.state.dots}
           gameOver={this.state.gameOver}
           playerOneScore={this.state.playerOneScore}
           playerTwoScore={this.state.playerTwoScore}

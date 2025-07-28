@@ -2,10 +2,12 @@ import Navbar from "./Navbar.js";
 import { useState } from "react";
 import { db } from "./firebase.js";
 import { collection, doc, addDoc, getDoc, updateDoc, serverTimestamp} from "firebase/firestore";
+import WaitingPopup from "./WaitingPopup.js";
 
 export default function GameRoomForm() {
     const [name, setName] = useState("");
     const [roomId, setRoomId] = useState("");
+    const [noOfPlayers, setNoOfPlayers] = useState(0);
 
     async function handleCreateRoom(e) {
         console.log("we are inside the handleCreateRoom function");
@@ -20,7 +22,8 @@ export default function GameRoomForm() {
             status: "waiting",
             createAt: serverTimestamp(),
         })
-
+        setNoOfPlayers(noOfPlayers+1);
+        setRoomId(docRef.id)
         alert(`Room created! Share this code: ${docRef.id}`);
     }
 
@@ -44,13 +47,15 @@ export default function GameRoomForm() {
                         <label>Create A Game Room </label>
                         <input type="string"
                                value={ name }
-                               onChange={(e) => setName(e.target.value)}
+                               onChange={(e) => {
+                                setName(e.target.value);
+                               }}
                                placeholder="Your Name"
                         />
                         <input type="Submit" />
                     </div>
                 </form>
-
+                <WaitingPopup trigger={noOfPlayers === 1 ? true : false} code={roomId}/>
             </div>
         </>
     )

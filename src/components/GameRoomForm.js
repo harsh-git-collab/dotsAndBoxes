@@ -5,20 +5,20 @@ import { collection, doc, addDoc, getDoc, updateDoc, serverTimestamp} from "fire
 import WaitingPopup from "./WaitingPopup.js";
 
 export default function GameRoomForm() {
-    const [name, setName] = useState("");
+    const [player1, setPlayer1Name] = useState("");
     const [roomId, setRoomId] = useState("");
     const [noOfPlayers, setNoOfPlayers] = useState(0);
 
     async function handleCreateRoom(e) {
         console.log("we are inside the handleCreateRoom function");
         e.preventDefault();
-        if(!name) {
+        if(!player1) {
             alert("Enter your name to create a room");
             return;
         }
 
         const docRef = await addDoc(collection(db, "room"), {
-            player1: {name, joinedAt: serverTimestamp() },
+            player1: {player1, joinedAt: serverTimestamp() },
             status: "waiting",
             createAt: serverTimestamp(),
         })
@@ -27,28 +27,44 @@ export default function GameRoomForm() {
         alert(`Room created! Share this code: ${docRef.id}`);
     }
 
-    async function handleJoinRoom(e) {
-        e.preventDefault();
-    }
+    // async function handleJoinRoom(e) {
+    //     e.preventDefault();
+    //     if (!name || !roomId) {
+    //         alert("Enter your name to create a Room \n or Enter a room ID to join a room");
+    //         return;
+    //     }
+
+    //     const roomRef = doc(db, "rooms", roomId); // This creates a reference to a specific document in the "rooms" collection
+    //     const roomSnap = await getDoc(roomRef); // This line fetches the document data from Firestore.
+
+    //     if (!roomSnap.exists()) {
+    //         alert("Room does not exist");
+    //     return;
+    // }
+    // }
 
     return (
         <>
             <Navbar />
             <div className="container">
-                <form onSubmit={handleJoinRoom} >
+                {/* <form onSubmit={handleJoinRoom} >
                     <div className="wrapper">
                         <label>Join a game room</label>
-                        <input type="string" name="GameRoomId" />
+                        <input
+                            type="string"
+                            name="GameRoomId"
+                            placeholder="Your Code"/>
+                        <input type="Submit" />
                     </div>
-                </form>
+                </form> */}
 
                 <form onSubmit={handleCreateRoom} >
                     <div className="wrapper">
                         <label>Create A Game Room </label>
                         <input type="string"
-                               value={ name }
+                               value={ player1 }
                                onChange={(e) => {
-                                setName(e.target.value);
+                                setPlayer1Name(e.target.value);
                                }}
                                placeholder="Your Name"
                         />

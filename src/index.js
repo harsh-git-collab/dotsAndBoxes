@@ -9,11 +9,11 @@ import { useState } from 'react';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 function Form() {
-  const [userJoinedAGameRoom, JoinGameRoom] = useState(false);
-  if(userJoinedAGameRoom) {
+  const [gameRoomFull, joinGameRoom] = useState(false);
+  if(gameRoomFull) {
     return <App />
   }else {
-    return <GameRoomForm />
+    return <GameRoomForm onFull={joinGameRoom}/>
   }
 }
 
